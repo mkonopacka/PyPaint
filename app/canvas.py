@@ -7,7 +7,7 @@ class Canvas(Field):
     
     def __init__(self, app, width, height, bg_color = colors.WHITE, name = "canvas", lay_num = 3):
         super().__init__(app, width, height, bg_color, name)
-        self.resetBackground(self.bg_color)
+        self.fillBackground(self.bg_color)
         self.ongoing = False
         self.active_tool = None
         self.temp = self.background.copy()
@@ -90,7 +90,7 @@ class Canvas(Field):
         for layer in self.layers:
             layer.fill(colors.CLEAR)
         self.temp.fill(colors.CLEAR)
-        self.resetBackground(colors.WHITE)
+        self.fillBackground(colors.WHITE)
 
 if __name__ == "__main__":
     pass

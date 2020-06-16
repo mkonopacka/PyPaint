@@ -7,20 +7,6 @@ from button import *
 from field import Field
 from math import floor
 
-# # component of a toolbar
-# class Row(Field):
-    
-#     def __init__(self, app, width, height, name, ncols):
-#         super().__init__(app, width, height, name = "row")
-#         self.ncols = ncols
-
-#     def click(self):
-#         pass
-
-#     def unclick(self):
-#         pass
-
-
 class Toolbar(Field):
     
     def_marg = 0.05
@@ -30,7 +16,7 @@ class Toolbar(Field):
 
     def __init__(self, app, width, height, bg_color = def_color, name = "toolbar", nrows = 4, ncols = 2, bd_color = def_bd_color, bd_thickness = def_bd_th):
         super().__init__(app, width, height, bg_color, name)
-        self.resetBackground(self.bg_color)
+        self.fillBackground(self.bg_color)
         self.bd_color = bd_color
         self.bd_thickness = bd_thickness
         self.visible_borders = False
@@ -77,8 +63,24 @@ class MainToolbar(Toolbar):
             super().__init__(app, width, height, nrows = nrows, ncols = ncols, name = name)
             self.visible_borders = False
             
-            colors = ColorsBar(app, width  - 2, height // 4)
+            # TODO replace numbers with const
+            # Add colors toolbar
+            colors = ColorsBar(app, self.width  - 2, self.height // 4)
             self.addMember(colors, (2,2))
+
+            # Add options toolbar at the bottom of main toolbar
+            bottom = Toolbar(app, self.width - 2, self.height // 8, name = "bottom bar", nrows = 1, ncols = 4)
+            self.addMember(bottom, (2, 400))
+
+            undo_icon = Icon(self.app, self.icon_w, img_path = 'images/undo.png', name = 'undo icon')
+            undo_icon.setAction(self.app.undo)
+            bottom.addMember(undo_icon, bottom.icons_coords[0])
+            
+            redo_icon = Icon(self.app, self.icon_w, img_path = 'images/redo.png', name = 'undo icon')
+            redo_icon.setAction(self.app.redo)
+            bottom.addMember(redo_icon, bottom.icons_coords[1])
+
+
 
 
     def click(self):

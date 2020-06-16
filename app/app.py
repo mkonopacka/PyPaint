@@ -10,8 +10,10 @@ import pygame as pg
 
 class App:
     
-    def __init__(self, caption = "Untitled", width = 1200, height = 760, fps = 60):
+    def __init__(self, caption = "PyPaint", width = 1200, height = 760, fps = 60):
 
+        canvas_width = width // 1.3
+        
         pg.init()
         self.caption = caption
         pg.display.set_caption(self.caption)
@@ -23,8 +25,9 @@ class App:
         self.clock = pg.time.Clock()
         self.saved = False
         self.run = True
-        self.main_view = MainView(self, width, height, width//1.3)
-        self.canvas = list(self.main_view.members.keys())[0]
+        self.canvas = Canvas(self, canvas_width, height)
+        self.toolbar = MainToolbar(self, width - canvas_width, height)
+        self.main_view = MainView(self, width, height, self.canvas, self.toolbar)
         self.active_tool = None
         self.mouse_pressed = False
         self.hovered = self.main_view.getHovered((0,0))
@@ -65,27 +68,27 @@ class App:
     def mouseMotion(self, pos, rel):
         self.mouse_pos = pos
         self.hovered = self.main_view.getHovered(self.mouse_pos)
-        
-        if self.clicked is self.canvas and self.canvas.ongoing:
-            self.canvas.updateDrawing(pos,rel)
+    
+        if isinstance(self.clicked, Canvas) and self.clicked.ongoing:
+            self.clicked.updateDrawing(pos,rel)
 
     def mouseDown(self):
-        print(f"Mouse pressed down, hovered: {self.hovered}")
         self.mouse_pressed = True
         
         try:
             self.clicked.unclick()
-            print("Unclick")
+            print(f"{self.clicked} unclicked")
         except AttributeError as e:
-            print(e, "nothing to unclick")
+            print("Trying to unclick but error raised:", e)
     
         self.clicked = self.hovered
 
-        if self.clicked is self.canvas and not self.canvas.ongoing:
+        if isinstance(self.clicked, Canvas) and not self.clicked.ongoing:
             if self.active_tool and self.active_tool.can_draw:
-                self.canvas.startDrawing(self.mouse_pos, self.active_tool)
+                self.clicked.startDrawing(self.mouse_pos, self.active_tool)
             else:
                 print("Active tool cannot draw or no active tool")
+        
         else:
             print(f"Mouse down on {self.clicked}")
 
@@ -95,8 +98,8 @@ class App:
         if self.clicked == self.hovered:
             self.clicked.click()
 
-        if self.clicked is self.canvas and self.canvas.ongoing:
-            self.canvas.endDrawing(self.mouse_pos)
+        if isinstance(self.clicked, Canvas) and self.clicked.ongoing:
+            self.clicked.endDrawing(self.mouse_pos)
 
     # IMPORTANT: numLock affects key modifiers (now they are adjusted to unlocked numbers), TODO FIX
     def keyDown(self, key, mod):
@@ -113,28 +116,25 @@ class App:
 
             # undo last changes: U
             if key == 117:
-                self.canvas.undoLast()
+                self.undo()
 
             # redo last changes: R
             if key == 114:
-                self.canvas.redoLast()
+                self.redo()
 
             # bigger brush: shift + "+"
             if key == 61 and mod == 2:
                 try:
                     self.active_tool.sizeUp()
-                except AttributeError:
-                    print("Can't resize tool")
+                except AttributeError as e:
+                    print("Can't resize active tool:", e)
             
             # smaller brush: shift + "-"
             if key == 45 and mod == 2:
                 try:
                     self.active_tool.sizeDown()
-                except AttributeError:
-                    print("Can't resize tool")
-
-        else:
-            print("can't use keyDown when mouse_pressed") # works wrong with touchpad? TODO fix
+                except AttributeError as e:
+                    print("Can't resize active tool:", e)
 
     def keyUp(self, key, mod):
         print("Key released:", key, "with modifier: ", mod)
@@ -146,11 +146,21 @@ class App:
     def save(self, askSure = False):
         self.saved = True
 
-    def whenModified(self):
+    def modified(self):
         self.saved = False
 
     def changeCaption(self, string):
         self.caption = string
+
+    def getCaption(self):
+        return self.caption
+
+
+    def undo(self):
+        self.canvas.undoLast()
+
+    def redo(self):
+        self.canvas.redoLast()
 
 if __name__ == "__main__":
     app = App()

@@ -67,7 +67,7 @@ class Field(abc.ABC):
         self.members[member][1] += dy
 
     def __str__(self):
-        return f"{self.name}, visible: {self.visible}"
+        return f"{self.name}"
 
     def getWidth(self):
         return self.width
@@ -78,15 +78,25 @@ class Field(abc.ABC):
     def getSize(self):
         return self.size
 
-    def resetBackground(self, color):
-        self.background.fill(color)
+    def fillBackground(self, color = None):
+        
+        print(f"fillBackground called on {self}")
+        if color:
+            self.bg_color = color
+
+        elif hasattr(self, 'image') and self.image:
+            self.background = self.image
+            print("Setting image as a background")
+            return
+
+        self.background.fill(self.bg_color)
 
     def resize(self, width, height):
         self.width = width
         self.height = height
         self.size = (self.width, self.height)
         self.background = pg.Surface(self.size, pg.HWSURFACE|pg.DOUBLEBUF).convert_alpha()
-        self.resetBackground(self.bg_color)
+        self.fillBackground()
         
     def resizeBy(self, float):
         w = int(self.width*float)

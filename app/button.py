@@ -6,6 +6,7 @@ import pygame.freetype
 import utils
 
 class Button(Field):
+    
     def __init__(self, app, width, height, bg_color = colors.DARK_GREY, name = "button"):
         super().__init__(app, width, height, bg_color, name)
         self.clicked = False
@@ -16,7 +17,9 @@ class Button(Field):
     def display(self, dest, coords):
         dest.blit(self.background, coords)
         if self.clicked:
+            print(f"Drawing boundary of {self}")
             pg.draw.rect(self.background, self.bd_color, self.background.get_bounding_rect(), self.bd_thickness)
+           
         for m in self.members: 
             if m.isVisible():
                 m.display(self.background, self.members[m])
@@ -31,7 +34,7 @@ class Button(Field):
 
     def unclick(self):
         self.clicked = False
-        self.resetBackground(self.bg_color)
+        self.fillBackground()
         print("Unclick")
 
     def isClicked(self):
@@ -59,11 +62,17 @@ class TextButton(Button):
 
 class Icon(Button):
 
-    def __init__(self, app, size, bg_color, name = "icon"):
+    def __init__(self, app, size, bg_color = colors.BLACK, name = "icon", img_path = None):
         super().__init__(app, size, size, bg_color, name)
+        if img_path:
+            self.setImage(img_path)
+        else:
+            self.image = None
 
-    def setImage(self, image):
-        pass
+    def setImage(self, path):
+        self.image = pg.image.load(path)
+        self.image = pg.transform.scale(self.image, self.size)
+        self.background  = self.image
 
 class ColorIcon(Icon):
     def __init__(self, app, size, color, name = "color icon"):
@@ -77,4 +86,6 @@ class ColorIcon(Icon):
                 print("Cannot set color of active tool")
 
         self.setAction(tryChangeColor)
+
+
 
