@@ -175,9 +175,9 @@ class App:
     def exit(self):
         self.run = False 
     
-    def save(self, askSure = False):
+    def save(self, name = 'saves/new.png', askSure = False):
         s = self.canvas.getCurrent()
-        pg.image.save(s, './saves/new.png')
+        pg.image.save(s, name)
 
     def undo(self):
         """

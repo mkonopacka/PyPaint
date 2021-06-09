@@ -58,9 +58,10 @@ class ColorsBar(Toolbar):
             self.addMember(icon, coords)
 
 class MainToolbar(Toolbar):
+    '''Class for modifying the area storing toolbars on the right. 
+    Add new subarea with self.addMember(toolbar_name, coords)'''
     def __init__(self, app, width, height, bg_color = Toolbar.def_color, name = "Main toolbar", nrows = 4, ncols = 4):
             super().__init__(app, width, height, nrows = nrows, ncols = ncols, name = name)
-
             self.part_w = self.width  - self.marg
             self.part_h = self.height // self.nrows
             
@@ -72,22 +73,32 @@ class MainToolbar(Toolbar):
             bottom = Toolbar(app, self.part_w, self.part_h, name = "Options toolbar", nrows = 2, ncols = 4)
             self.addMember(bottom, (self.marg, self.height - self.part_h))
 
+            # Undo
             undo_icon = ImageIcon(self.icon_w, 'images/undo.png', name = 'Undo icon')
             undo_icon.setAction(self.app.undo)
             bottom.addMember(undo_icon, bottom.icons_coords[0])
             
+            # Redo
             redo_icon = ImageIcon(self.icon_w, 'images/redo.png', name = 'Redo icon')
             redo_icon.setAction(self.app.redo)
             bottom.addMember(redo_icon, bottom.icons_coords[1])
 
+            # Resize brush +
             plus_icon = ImageIcon(self.icon_w, 'images/plus.png', name = 'Plus icon')
             plus_icon.setAction(self.app.sizeToolUp)
             bottom.addMember(plus_icon, bottom.icons_coords[2])
-
+            
+            # Resize brush -
             minus_icon = ImageIcon(self.icon_w, 'images/minus.png', name = 'Minus icon')
             minus_icon.setAction(self.app.sizeToolDown)
             bottom.addMember(minus_icon, bottom.icons_coords[3])
 
+            # Activate brush
             brush_icon = ImageIcon(self.icon_w, 'images/brush.png', name = 'Brush icon')
             brush_icon.setAction(self.app.chooseTool, tool.brush1)
             bottom.addMember(brush_icon, bottom.icons_coords[4])
+
+            # Save image
+            save_icon = ImageIcon(self.icon_w, 'images/save.png', name = 'Save icon')
+            save_icon.setAction(self.app.save)
+            bottom.addMember(save_icon, bottom.icons_coords[5])
