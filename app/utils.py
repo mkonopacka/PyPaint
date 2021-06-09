@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 def pointInsideRect(point, corner, rwidth, rheight):
     
     types = [int, float]
@@ -27,8 +26,3 @@ if __name__ == '__main__':
     a = 9
     b = 5
     print(pointInsideRect(x, y, a, b))
-=======
-
-def pointInsideRect(point, corner, rwidth, rheight):
-    return corner[0] <= point[0] and corner[0] + rwidth >= point[0] and corner[1] <= point[1] and corner[1] + rheight >= point[1]
->>>>>>> cfade769e8cb13a6cf0c18c7248246e8cebe9d1d
