@@ -6,3 +6,5 @@ Paint-like pygame app with basic functionality:
 - undo / redo up to a fixed number of changes
 - saving image
 - working icons and shortcuts
+
+![Screenshot1](/screenshots/ss1.png?raw=true)
